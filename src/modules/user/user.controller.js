@@ -3,7 +3,7 @@ import { responseHandler } from "../../utils/response.js";
 import { sendOTP } from "../../utils/otp.js";
 import { asyncHandler } from "../../utils/async_handler.js";
 import { sendEmail } from "../../utils/email.js";
-
+import fsPromises from "fs/promises";
 export const register = asyncHandler(async (req, res) => {
   const { firstname, lastname, email, phoneNumber, gender, password, role } =
     req.body;
@@ -43,6 +43,37 @@ export const logout = asyncHandler(async (req, res) => {
   await userService.logoutService(req.user, req.token);
   responseHandler(res, 200, "Logout successful");
 });
+
+export const logoutAll = asyncHandler(async (req, res) => {
+  await logoutAllService(req.user._id);
+  responseHandler(res, 200, "Logged out from all devices");
+});
+
+
+export const uplodaAvatarController = asyncHandler(async (req, res) => {
+  if (!req.file) {
+    throw new AppError("No file uploaded", 400);
+  }
+
+  const oldAvatar = req.user.avatar;
+  const newAvatar = req.file.path;
+
+  // 1️⃣ Update DB first
+  const updatedUser = await userService.updateUser(req.user, {
+    avatar: newAvatar,
+  });
+
+  if (oldAvatar && oldAvatar !== newAvatar) {
+    try {
+      await fsPromises.unlink(oldAvatar);
+    } catch (err) {
+      console.warn("Failed to delete old avatar:", err.message);
+    }
+  }
+
+  responseHandler(res, 200, "Avatar uploaded successfully", updatedUser);
+});
+
 
 export const sendEmailOTPController = asyncHandler(async (req, res) => {
   const { email } = req.body;

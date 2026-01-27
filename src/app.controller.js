@@ -9,6 +9,7 @@ export const bootstrap = (app, express) => {
   app.use((req, res) => {
     res.status(404).json({ message: "Route not found" });
   });
+  // error come from middleware
   app.use(globalErrorHandler);
 
 };

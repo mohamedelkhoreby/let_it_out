@@ -78,8 +78,13 @@ const userSchema = new Schema(
       enum: Object.values(authProviderEnum),
       default: authProviderEnum.local,
     },
+    tokensInvalidBefore: {
+      type: Date,
+      default: new Date(0), 
+    },
   },
-  { timestamps: true }
+
+  { timestamps: true },
 );
 
 userSchema.pre(/^find/, async function () {

@@ -223,3 +223,8 @@ export const hardDeleteUser = async (_id, password) => {
 
   return true;
 };
+export const logoutAllService = async (userId) => {
+  await userModel.findByIdAndUpdate(userId, {
+    tokensInvalidBefore: new Date(),
+  });
+};

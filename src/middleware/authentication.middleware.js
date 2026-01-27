@@ -15,12 +15,15 @@ export const authenticate = async (req, res, next) => {
       data: { jti: decoded.jti },
       model: tokenModel,
     });
+
     if (tokenInDb && tokenInDb.revoked) {
       return res.status(401).json({ message: "Token has been revoked" });
     }
-
+   
+   /*  if (decoded.iat * 1000 < user.tokensInvalidBefore.getTime()) {
+      throw new Error("Token revoked");
+    } */
     const user = await userModel.findById(decoded.id);
-
     if (!user || user.freezeUser) {
       return res.status(401).json({ message: "Invalid credentials" });
     }
