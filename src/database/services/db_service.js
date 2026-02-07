@@ -1,6 +1,7 @@
-export const create = async ({ model, data }) => {
-  return await model.create(data);
+export const create = async ({ model, data, session }) => {
+  return await model.create([data], { session });
 };
+
 
 export const findByEmail = ({ model, email }) => {
   return model.findOne({ email });
@@ -19,8 +20,19 @@ export const updateOne = ({
   updateData = {},
   options = { runValidators: true },
   model,
+  session,
 }) => {
-  return model.updateOne(filter, updateData, options);
+  return model.updateOne(filter, updateData, { ...options, session });
+};
+
+
+
+export const findByIdAndDelete = ({ id, options = {}, model }) => {
+  return model.findByIdAndDelete(id, options);
+};
+
+export const findOne = ({ filter = {}, model, session }) => {
+  return model.findOne(filter).session(session);
 };
 
 export const findByIdAndUpdate = ({
@@ -28,14 +40,7 @@ export const findByIdAndUpdate = ({
   updateData = {},
   options = {},
   model,
+  session,
 }) => {
-  return model.findByIdAndUpdate(id, updateData, options);
-};
-
-export const findByIdAndDelete = ({ id, options = {}, model }) => {
-  return model.findByIdAndDelete(id, options);
-};
-
-export const findOne = ({data, model}) => {
-  return model.findOne(data);
+  return model.findByIdAndUpdate(id, updateData, { ...options, session });
 };

@@ -15,7 +15,6 @@ try {
   logger.error("Failed to connect database", err);
   process.exit(1);
 }
-``;
 
 bootstrap(app, express);
 
